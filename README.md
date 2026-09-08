@@ -1,5 +1,7 @@
 # Conversor DANFE
 
+[![tests](https://github.com/ogabrieltech/conversor-danfe/actions/workflows/tests.yml/badge.svg)](https://github.com/ogabrieltech/conversor-danfe/actions/workflows/tests.yml)
+
 **Página do projeto:** https://ogabrieltech.com.br/projetos/conversor-danfe.html  
 **Repositório:** https://github.com/ogabrieltech/conversor-danfe
 
@@ -31,23 +33,34 @@ O projeto processa arquivos localmente, aceita XML, ZIP ou pastas inteiras e ger
 - pypdf
 - PyInstaller
 - XML / `xml.etree.ElementTree`
+- GitHub Actions
 
 ## Estrutura
 
 ```text
 conversor-danfe/
-├── conversor_danfe.py
-├── INSTALAR.cmd
-├── requirements.txt
-├── requirements-build.txt
+├── danfe_converter/
+│   ├── __init__.py
+│   ├── __main__.py
+│   ├── app.py
+│   ├── core.py
+│   └── gui.py
 ├── tests/
 │   └── test_conversor_danfe.py
 ├── docs/
 │   └── index.html
+├── .github/workflows/
+│   └── tests.yml
+├── conversor_danfe.py
+├── INSTALAR.cmd
+├── requirements.txt
+├── requirements-build.txt
 ├── THIRD_PARTY_LICENSES.md
 ├── LICENSE
 └── README.md
 ```
+
+A lógica de leitura, validação e geração fica separada da interface gráfica e da camada de linha de comando, facilitando manutenção e testes.
 
 ## Instalação no Windows
 
@@ -67,6 +80,12 @@ py -3.12 -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
 python conversor_danfe.py
+```
+
+Também é possível executar como módulo:
+
+```bash
+python -m danfe_converter
 ```
 
 ## Uso pela interface
@@ -124,6 +143,8 @@ Os testes cobrem a leitura dos principais campos da NF-e, validação do modelo 
 ```bash
 python -m unittest discover -s tests -v
 ```
+
+A suíte também é executada automaticamente pelo GitHub Actions em pushes e pull requests para `main`.
 
 ## Observação fiscal
 
