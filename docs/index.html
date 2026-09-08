@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Conversor DANFE: aplicativo desktop em Python para converter XMLs autorizados de NF-e em DANFE PDF, com processamento local e em lote.">
+  <title>Conversor DANFE | Gabriel Santos</title>
+  <style>
+    :root {
+      --bg: #070b12;
+      --panel: #0d1420;
+      --panel-2: #111c2c;
+      --line: #1f3048;
+      --text: #f4f7fb;
+      --muted: #9aacbf;
+      --accent: #3b82f6;
+      --accent-2: #60a5fa;
+      --success: #34d399;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+    a { color: inherit; }
+    .wrap { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: rgba(7, 11, 18, .88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner { height: 64px; display: flex; align-items: center; justify-content: space-between; }
+    .brand { font-weight: 800; text-decoration: none; letter-spacing: -.3px; }
+    .brand span { color: var(--accent-2); }
+    .nav-link { color: var(--muted); text-decoration: none; font-size: 14px; }
+    .hero { padding: 96px 0 72px; }
+    .eyebrow { color: var(--accent-2); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .12em; }
+    h1 { font-size: clamp(42px, 8vw, 78px); line-height: .98; letter-spacing: -.055em; margin: 18px 0 24px; max-width: 850px; }
+    .lead { color: var(--muted); font-size: clamp(17px, 2.2vw, 21px); max-width: 720px; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 18px; border-radius: 9px; text-decoration: none; font-weight: 700; border: 1px solid var(--line); }
+    .btn-primary { background: var(--accent); border-color: var(--accent); }
+    .btn-secondary { color: var(--muted); background: var(--panel); }
+    .app-shell { margin-top: 58px; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: var(--panel); box-shadow: 0 30px 90px rgba(0,0,0,.35); }
+    .app-top { padding: 26px 28px; background: #071a33; }
+    .app-kicker { color: var(--success); font-size: 12px; font-weight: 800; letter-spacing: .08em; }
+    .app-title { margin-top: 4px; font-size: 24px; font-weight: 800; }
+    .app-body { padding: 26px 28px 30px; }
+    .drop { border: 1px solid var(--line); border-radius: 12px; background: #0a111b; padding: 22px; }
+    .drop strong { display: block; margin-bottom: 6px; }
+    .drop span { color: var(--muted); font-size: 14px; }
+    .fake-row { display: grid; grid-template-columns: 1fr 150px; gap: 12px; margin-top: 14px; }
+    .fake-input, .fake-button { border: 1px solid var(--line); border-radius: 9px; padding: 12px 14px; font-size: 14px; }
+    .fake-input { color: var(--muted); background: #0a111b; }
+    .fake-button { background: var(--success); color: #03120c; text-align: center; font-weight: 800; }
+    section { padding: 72px 0; border-top: 1px solid var(--line); }
+    h2 { font-size: clamp(30px, 5vw, 46px); letter-spacing: -.04em; margin: 0 0 14px; }
+    .section-copy { color: var(--muted); max-width: 700px; margin-bottom: 30px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .card { padding: 22px; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); }
+    .card strong { display: block; margin-bottom: 8px; }
+    .card p { margin: 0; color: var(--muted); font-size: 14px; }
+    .stack { display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip { border: 1px solid var(--line); background: var(--panel); color: var(--muted); border-radius: 999px; padding: 8px 12px; font-size: 13px; }
+    .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; counter-reset: step; }
+    .step { padding: 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; }
+    .step::before { counter-increment: step; content: "0" counter(step); display: block; color: var(--accent-2); font-weight: 800; font-size: 13px; margin-bottom: 10px; }
+    .step span { color: var(--muted); font-size: 14px; }
+    footer { padding: 40px 0; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); }
+    @media (max-width: 820px) {
+      .grid { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr 1fr; }
+      .fake-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      .wrap { width: min(100% - 28px, 1120px); }
+      .hero { padding-top: 64px; }
+      .flow { grid-template-columns: 1fr; }
+      .app-top, .app-body { padding-left: 18px; padding-right: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="wrap nav-inner">
+      <a class="brand" href="https://github.com/ogabrieltech">ogabriel<span>tech</span></a>
+      <a class="nav-link" href="#tecnologia">Tecnologia</a>
+    </div>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="wrap">
+        <div class="eyebrow">Python • automação • documentos fiscais</div>
+        <h1>XML de NF-e para DANFE PDF, em lote e no próprio computador.</h1>
+        <p class="lead">Aplicativo desktop desenvolvido para reduzir trabalho manual na conversão de notas fiscais eletrônicas, com validação, organização automática e relatório de processamento.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="https://github.com/ogabrieltech/conversor-danfe">Ver repositório</a>
+          <a class="btn btn-secondary" href="#como-funciona">Como funciona</a>
+        </div>
+
+        <div class="app-shell" aria-label="Representação da interface do Conversor DANFE">
+          <div class="app-top">
+            <div class="app-kicker">NF-e • PDF</div>
+            <div class="app-title">Conversor de XML para DANFE</div>
+          </div>
+          <div class="app-body">
+            <div class="drop">
+              <strong>Arquivos de origem</strong>
+              <span>Selecione XMLs, um arquivo ZIP ou uma pasta inteira.</span>
+            </div>
+            <div class="fake-row">
+              <div class="fake-input">DANFEs/</div>
+              <div class="fake-button">GERAR DANFEs</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section>
+      <div class="wrap">
+        <h2>O problema</h2>
+        <p class="section-copy">Converter e organizar DANFEs manualmente consome tempo quando há muitos XMLs. O projeto automatiza esse fluxo sem depender de upload para sites de terceiros.</p>
+        <div class="grid">
+          <div class="card"><strong>Processamento em lote</strong><p>XMLs, ZIPs e pastas completas podem ser processados em uma única execução.</p></div>
+          <div class="card"><strong>Validação fiscal</strong><p>O código verifica modelo 55 e protocolo de autorização antes de gerar o documento.</p></div>
+          <div class="card"><strong>Rastreabilidade</strong><p>Um CSV registra arquivos gerados, ignorados, preservados e eventuais erros.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="como-funciona">
+      <div class="wrap">
+        <h2>Como funciona</h2>
+        <p class="section-copy">O fluxo foi pensado para uso operacional simples, mantendo a lógica de validação e geração separada da interface.</p>
+        <div class="flow">
+          <div class="step"><strong>Coleta</strong><br><span>Localiza XMLs diretamente, dentro de ZIPs ou em subpastas.</span></div>
+          <div class="step"><strong>Leitura</strong><br><span>Extrai número, série, destinatário, chave e status do XML.</span></div>
+          <div class="step"><strong>Validação</strong><br><span>Ignora modelos não suportados, documentos sem autorização e duplicidades.</span></div>
+          <div class="step"><strong>Saída</strong><br><span>Gera PDFs nomeados, lote consolidado opcional e relatório CSV.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tecnologia">
+      <div class="wrap">
+        <h2>Tecnologia</h2>
+        <p class="section-copy">Projeto desktop com interface gráfica e modo CLI, construído com bibliotecas abertas do ecossistema Python.</p>
+        <div class="stack">
+          <span class="chip">Python 3.12</span>
+          <span class="chip">Tkinter</span>
+          <span class="chip">XML</span>
+          <span class="chip">BrazilFiscalReport</span>
+          <span class="chip">pypdf</span>
+          <span class="chip">PyInstaller</span>
+          <span class="chip">unittest</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">Gabriel Santos • Analista de Sistemas</div>
+  </footer>
+</body>
+</html>
